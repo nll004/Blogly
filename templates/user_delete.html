@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block page_title %} Edit User {% endblock %}
+
+{% block page_content %}
+<header>
+    <a href="/users">User Home</a>
+</header>
+
+<form action="/users/{{user.id}}/delete" method="POST">
+    <h2>Are you sure you want to remove- <span>{{user.full_name}}</span>?</h2>
+    <button>Yes</button>
+    <button><a href="/users">Cancel</a></button>
+</form>
+
+{% endblock %}

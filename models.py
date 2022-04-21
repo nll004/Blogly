@@ -15,16 +15,14 @@ class User(db.Model):
     __tablename__ = 'user'
 
     def __repr__(self):
-        return f"User: {self.first_name} {self.last_name}. Picture-{self.image_url}"
+        return f"User: {self.first_name} {self.last_name}. Picture URL: {self.image_url}"
 
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
 
-
-    id = db.Column(db.Integer,
-                    primary_key = True,
-                    autoincrement = True)
-    first_name = db.Column(db.String,
-                        nullable = False)
-    last_name = db.Column(db.String,
-                        nullable = False)
+    id = db.Column(db.Integer, primary_key = True)
+    first_name = db.Column(db.Text, nullable = False)
+    last_name = db.Column(db.Text, nullable = False)
     image_url = db.Column(db.Text,
-                        default = 'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg')
+                default = 'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg')
