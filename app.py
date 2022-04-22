@@ -55,7 +55,6 @@ def create_new_user():
         return render_template('new_user.html')
 
 
-# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 @app.route('/users/<user_id>')
 def user_profile(user_id):
     '''Display user profile'''
