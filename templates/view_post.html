@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block page_title %} Post {% endblock %}
+
+{% block page_content %}
+<section>
+    <p>Title: {{post.title}}</p>
+    <p>Content: {{post.content}}</p>
+    <p>By: {{user.full_name}}</p>
+</section>
+<a href="/users/{{user.id}}">Cancel</a>
+<a href="/posts/{{ post.id }}/edit">Edit</a>
+<!-- insert action for delete form -->
+<form action="/posts/{{post.id}}/delete" method="POST">
+    <input type="submit" value="Delete">
+</form>
+
+
+{% endblock %}

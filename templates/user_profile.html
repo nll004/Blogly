@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block page_title %} Profile {% endblock %}
+
+{% block page_content %}
+<header>
+    <a href="/users">All Users</a>
+</header>
+
+<h1>Profile Page</h1>
+    <div>
+        <h2>{{name}}</h2>
+        <button id="edit_user"><a href="/users/{{id}}/edit">Edit</a></button>
+        <button id="del_user"><a href="/users/{{id}}/delete">Delete</a></button>
+        <img src="{{pic}}" alt="Profile Picture">
+    </div>
+    <div>
+        <h2>Posts</h2>
+        <ul>
+            {% for post in posts %}
+            <li><a href="/posts/{{post.id}}">{{post.title}}</a></li>
+            {% endfor %}
+        </ul>
+        <a href="/users/{{id}}/posts/new">Add Post</a>
+    </div>
+
+{% endblock %}
