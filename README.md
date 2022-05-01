@@ -14,7 +14,3 @@ We were instructed to complete a simple project to help grasp the concepts of us
 
 ## To Do
 I have completed parts 1 and 2 but have yet to complete part 3. I need to write tests for the application and add some simple styling.
-
-
-Whats the project about
-How to run the application
