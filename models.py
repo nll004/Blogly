@@ -26,6 +26,7 @@ class User(db.Model):
                 default = 'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg')
 
 
+
 class Post(db.Model):
     '''Post template model for database'''
 
@@ -35,4 +36,25 @@ class Post(db.Model):
     title = db.Column(db.String(30), nullable= False)
     content = db.Column(db.Text, nullable= False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable= False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
+
+    # have to add cascade='all, delete', passive_deletes=True to relationship for ORM to cascade on delete
+    user = db.relationship('User', cascade="all, delete", passive_deletes=True)
+    tag = db.relationship('Tag', secondary='posttag', backref='posts')
+
+class Tag(db.Model):
+    '''Tag for post grouping'''
+
+    __tablename__ = 'tags'
+
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(20), unique = True)
+
+
+class PostTag(db.Model):
+    '''Reference table for connecting tags and posts'''
+
+    __tablename__ = 'posttag'
+
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id', ondelete='CASCADE'), primary_key = True, nullable=False)
+    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id', ondelete='CASCADE'), primary_key= True, nullable=False)

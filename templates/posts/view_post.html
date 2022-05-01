@@ -7,6 +7,13 @@
     <p>Title: {{post.title}}</p>
     <p>Content: {{post.content}}</p>
     <p>By: {{user.full_name}}</p>
+    {% if post.tag %}
+        <p><a href="/tags">Tags:</a>
+        {% for tag in post.tag %}
+        <a href='/tags/{{ tag.id }}'>{{tag.name}}</a>
+        {% endfor %}
+    {% endif %}
+    </p>
 </section>
 <a href="/users/{{user.id}}">Cancel</a>
 <a href="/posts/{{ post.id }}/edit">Edit</a>

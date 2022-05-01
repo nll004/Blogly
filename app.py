@@ -1,7 +1,7 @@
 """Blogly application."""
 
-from flask import Flask, redirect, render_template, request, flash
-from models import db, connect_db, User, Post
+from flask import Flask, redirect, render_template, request
+from models import db, connect_db, User, Post, PostTag, Tag
 from flask_debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
@@ -24,13 +24,18 @@ def redirect_to_main():
     return redirect('/users')
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404_page.html')
+
+
 @app.route('/users')
 def user_home():
     '''Display a full list of users'''
 
     users = User.query.all()
 
-    return render_template("index.html", users= users)
+    return render_template("/user/index.html", users= users)
 
 
 @app.route('/users/new', methods=['GET', 'POST'])
@@ -52,7 +57,7 @@ def create_new_user():
         return redirect('/users')
 
     else:
-        return render_template('new_user.html')
+        return render_template('/user/new_user.html')
 
 
 @app.route('/users/<user_id>')
@@ -63,7 +68,7 @@ def user_profile(user_id):
     post_list = Post.query.filter(Post.user_id == user_id).all()
     prof_pic = user.image_url
 
-    return render_template('user_profile.html', pic=prof_pic, name=user.full_name, id=user_id, posts= post_list)
+    return render_template('/user/user_profile.html', pic=prof_pic, name=user.full_name, id=user_id, posts= post_list)
 
 
 @app.route('/users/<user_id>/edit', methods=['GET', 'POST'])
@@ -87,7 +92,7 @@ def edit_user(user_id):
         return redirect('/users')
 
     else:
-        return render_template('edit_user.html', id= user_id, fname = first_name, lname = last_name, pic= prof_pic)
+        return render_template('/user/edit_user.html', id= user_id, fname = first_name, lname = last_name, pic= prof_pic)
 
 
 @app.route('/users/<user_id>/delete', methods=['GET', 'POST'])
@@ -103,7 +108,7 @@ def delete_user(user_id):
         return redirect('/users')
 
     else:
-        return render_template('user_delete.html', user=user)
+        return render_template('/user/user_delete.html', user=user)
 
 
 @app.route('/users/<int:user_id>/posts/new', methods=['GET', 'POST'])
@@ -111,19 +116,26 @@ def render_newpost_form(user_id):
     '''Render form for new post or post it to db if method == POST'''
 
     user = User.query.get_or_404(user_id)
+    tags = Tag.query.all()
 
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['post_content']
+        tags = request.form.getlist('tags')
 
         post = Post(title=title, content=content, user_id= user.id)
-
         db.session.add(post)
         db.session.commit()
+
+        for tag in tags:
+            add_tag = PostTag(post_id=post.id, tag_id=tag)
+            db.session.add(add_tag)
+        db.session.commit()
+
         return redirect(f"/users/{user.id}")
 
     else:
-        return render_template('create_post.html', id=user.id, name=user.first_name)
+        return render_template('/posts/create_post.html', user=user, tags=tags)
 
 
 @app.route('/posts/<int:post_id>')
@@ -132,7 +144,7 @@ def post_page(post_id):
     post = Post.query.get_or_404(post_id)
     user = User.query.get_or_404(post.user_id)
 
-    return render_template('view_post.html', post=post, user=user)
+    return render_template('/posts/view_post.html', post=post, user=user)
 
 
 @app.route('/posts/<int:post_id>/edit', methods=['GET', 'POST'])
@@ -151,7 +163,7 @@ def edit_posts(post_id):
         return redirect(f"/users/{post.user_id}")
 
     else:
-        return render_template('edit_post.html', post=post)
+        return render_template('/posts/edit_post.html', post=post)
 
 
 @app.route('/posts/<int:post_id>/delete', methods=["POST"])
@@ -163,3 +175,65 @@ def delete_post(post_id):
     db.session.commit()
 
     return redirect(f"/users/{post.user_id}")
+
+
+@app.route('/tags')
+def list_tags():
+    '''Display the list of tags'''
+
+    tags = Tag.query.all()
+
+    return render_template('/tags/tags_list.html', tags=tags)
+
+
+@app.route('/tags/<int:tag_id>')
+def view_tag(tag_id):
+    '''View individual tag information'''
+
+    tag = Tag.query.get_or_404(tag_id)
+
+    return render_template('/tags/tag_info.html', tag= tag)
+
+
+@app.route('/tags/new', methods=['GET', 'POST'])
+def create_tag():
+    '''Display form to create new tag in database'''
+
+    if request.method == 'POST':
+        tag_name = request.form['name']
+        tag = Tag(name=tag_name)
+        db.session.add(tag)
+        db.session.commit()
+
+        return redirect('/tags')
+
+    else:
+        return render_template('/tags/create_tag.html')
+
+
+@app.route('/tags/<int:tag_id>/edit', methods=['GET', 'POST'])
+def edit_tag(tag_id):
+    '''Navigate to tag info and edit'''
+
+    tag = Tag.query.get(tag_id)
+
+    if request.method == 'POST':
+        tag.name = request.form['name']
+        db.session.add(tag)
+        db.session.commit()
+
+        return redirect('/tags')
+
+    else:
+        return render_template('/tags/edit_tag.html', tag=tag)
+
+
+@app.route('/tags/<int:tag_id>/delete', methods=['POST'])
+def delete_tag(tag_id):
+    '''Delete tag from database'''
+
+    tag = Tag.query.get(tag_id)
+    db.session.delete(tag)
+    db.session.commit()
+
+    return redirect('/tags')
