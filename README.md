@@ -2,7 +2,8 @@
 Springboard Software Engineering Bootcamp - Cohort Jan 2022
 
 ## Assignment
-We were instructed to complete a simple project to help grasp the concepts of using an ORM to manipulate a database and apply that data in our application. I built a very simple application to create, edit and delete users as well as create, edit and delete minimal posts for those users.
+We were instructed to complete a simple project to help grasp the concepts of using an ORM to manipulate a database and apply that data in our application.
+I built a very simple application to create, edit and delete users as well as create, edit and delete minimal posts for those users. Tags were added and are able to be attached to posts as desired.
 
 ### Programs Used
 - Flask framework for Python
@@ -13,4 +14,4 @@ We were instructed to complete a simple project to help grasp the concepts of us
 - CSS and Bootstrap
 
 ## To Do
-I have completed parts 1 and 2 but have yet to complete part 3. I need to write tests for the application and add some simple styling.
+I have completed parts 1, 2 and 3. I need to write tests for the application and add some simple styling.
